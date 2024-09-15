@@ -16,7 +16,7 @@
 
 ## Project Overview
 
-The Tenant Management System is a backend application designed to manage properties and tenants. Each user has their own data for properties and tenants, ensuring that no other user can access their information. The system supports full CRUD (Create, Read, Update, Delete) operations for managing properties and tenants.
+The Tenant Management System is a backend application designed to manage properties and tenants. Each user has their data for properties and tenants, ensuring that no other user can access their information. The system supports full CRUD (Create, Read, Update, Delete) operations for managing properties and tenants.
 
 ## Technologies Used
 
@@ -25,7 +25,7 @@ The Tenant Management System is a backend application designed to manage propert
 - MongoDB
 - Mongoose
 - bcryptjs (for password hashing)
-- jsonwebtoken (for authentication)
+- JSON web token (for authentication)
 - nodemon (for autostart server no need to start over and over again)
 - cors (enables safe cross-origin requests, while ensuring security through server-defined permissions)
 
@@ -62,7 +62,7 @@ The Tenant Management System is a backend application designed to manage propert
 
 ### User Routes
 
-- **POST /api/users/register**
+- **POST `/api/users/register` **
 
   - Register a new user.
   - Request body:
@@ -74,8 +74,8 @@ The Tenant Management System is a backend application designed to manage propert
     }
     ```
 
-- **POST /api/users/login**
-  - Login an existing user.
+- **POST `/api/users/login` **
+  - Login as an existing user.
   - Request body:
     ```json
     {
@@ -86,43 +86,43 @@ The Tenant Management System is a backend application designed to manage propert
 
 ### Property Routes
 
-- **POST /api/property**
+- **POST `/api/property` **
 
   - Create a new property.
   - Requires authentication (JWT token).
 
-- **GET /api/property**
+- **GET `/api/property` **
 
   - Retrieve all properties for the authenticated user.
   - Requires authentication (JWT token).
 
-- **PUT /api/property/:id**
+- **PUT `/api/property/:id` **
 
   - Update an existing property.
   - Requires authentication (JWT token).
 
-- **DELETE /api/property/:id**
+- **DELETE `/api/property/:id` **
   - Delete a property.
   - Requires authentication (JWT token).
 
 ### Tenant Routes
 
-- **POST /api/tenant/:propertyid/create**
+- **POST `/api/tenant/:propertyid/create` **
 
   - Create a new tenant.
   - Requires authentication (JWT token).
 
-- **GET /api/tenant/:propertyid/**
+- **GET `/api/tenant/:propertyid/` **
 
   - Retrieve all tenants for the authenticated user.
   - Requires authentication (JWT token).
 
-- **PUT /api/tenant/:propertyid/:id**
+- **PUT `/api/tenant/:propertyid/:id` **
 
   - Update an existing tenant.
   - Requires authentication (JWT token).
 
-- **DELETE /api/tenant/:propertyid/:id**
+- **DELETE `/api/tenant/:propertyid/:id` **
   - Delete a tenant.
   - Requires authentication (JWT token).
 
@@ -132,11 +132,11 @@ Users can register and log in to the system using the provided API routes. Passw
 
 ### Password Hashing
 
-When a user registers, their password is hashed before being stored in the database to protect sensitive information.
+When users register, their password is hashed before being stored in the database to protect sensitive information.
 
 ## Authentication and Authorization
 
-After a successful login, the server generates a unique JWT token that is used to authenticate subsequent requests. This token must be included in the headers of protected routes.
+After a successful login, the server generates a unique JWT token to authenticate subsequent requests. This token must be included in the headers of protected routes.
 
 ## How to Use Postman
 
@@ -161,10 +161,12 @@ After a successful login, the server generates a unique JWT token that is used t
 
 ## Conclusion
 
-The Tenant Management System (Backend) provides a secure and efficient way to manage properties and tenants, ensuring that each user has access only to their own data. This README provides a comprehensive overview of the project's structure, routes, and usage instructions.
+The Tenant Management System (Backend) provides a secure and efficient way to manage properties and tenants, ensuring that each user has access only to their data. This README comprehensively overviews the project's structure, routes, and usage instructions.
 
 ## Created by
 
 ```
      -Anup Kumar Shaw
 ```
+
+---
