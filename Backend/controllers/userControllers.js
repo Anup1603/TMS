@@ -1,5 +1,6 @@
 const generateToken = require("../utils/generateToken");
 const User = require("../model/userModel")
+const bcrypt = require("bcryptjs");
 
 const getAllUser = async (req, res) => {
     const allUserData = await User.find();
@@ -73,9 +74,17 @@ const singleUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     const { id } = req.params;
+    const { password, ...otherUpdate } = req.body;
 
     try {
-        const user = await User.findByIdAndUpdate({ _id: id }, req.body, { new: true });
+
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            otherUpdate.password = hashedPassword;
+        }
+
+        const user = await User.findByIdAndUpdate({ _id: id }, otherUpdate, { new: true });
         if (!user)
             return res.status(401).json({ message: `User does't exist` });
 
