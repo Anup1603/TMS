@@ -168,5 +168,3 @@ The Tenant Management System (Backend) provides a secure and efficient way to ma
 ```
      -Anup Kumar Shaw
 ```
-
----
