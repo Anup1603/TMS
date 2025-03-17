@@ -32,7 +32,8 @@ const startServer = async () => {
     try {
         await connectDB();
         app.listen(PORT, () => {
-            console.log(`Server is connected Successfully @ ${PORT == 8000 || 5000 ? "http" : "https"}://${process.env.HOSTNAME}:${PORT}`)
+            // console.log(`Server is connected Successfully @ ${PORT == 8000 || 5000 ? "http" : "https"}://${process.env.HOSTNAME}:${PORT}`)
+            console.log(`Server is connected Successfully @ http://localhost:${PORT}`)
         })
     } catch (err) {
         console.log(`Somethings went wrong from server end: ${err.message}`)
