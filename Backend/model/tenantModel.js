@@ -37,7 +37,7 @@ const tenantSchema = new mongoose.Schema({
         default: Date.now,
     },
 
-    property: {
+    property_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Property",
         required: true,

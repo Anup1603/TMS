@@ -5,9 +5,9 @@ const Tenant = require("../model/tenantModel");
 const getTenant = async (req, res) => {
     const { propertyid } = req.params;
     try {
-        const tenant = await Tenant.find({ property: propertyid }).populate("property");
+        const tenant = await Tenant.find({ property_id: propertyid }).populate("property_id");
         if (tenant.length === 0)
-            return res.status(404).json({ message: `No tenant found in this property` });
+            return res.status(404).json({ message: `No tenant is allocated in this property right now` });
 
         return res.status(200).json(tenant);
     } catch (error) {
@@ -34,7 +34,7 @@ const createTenant = async (req, res) => {
             gov_id,
             lease_start_date,
             lease_end_date,
-            property: propertyid
+            property_id: propertyid
         })
 
         return res.status(201)
@@ -48,7 +48,7 @@ const createTenant = async (req, res) => {
 const getSingleTenant = async (req, res) => {
     const { propertyid, id } = req.params;
     try {
-        const tenant = await Tenant.findOne({ property: propertyid, _id: id });
+        const tenant = await Tenant.findOne({ property_id: propertyid, _id: id });
         if (!tenant)
             return res.status(401).json({ message: `Tenant not avaiable` });
 
@@ -63,7 +63,7 @@ const updateTenent = async (req, res) => {
     const { propertyid, id } = req.params;
     try {
         const tenant = await Tenant.findByIdAndUpdate
-            ({ property: propertyid, _id: id }, req.body, { new: true });
+            ({ property_id: propertyid, _id: id }, req.body, { new: true });
 
         if (!tenant)
             return res.status(401).json({ message: `Tenant not found or can't be updated` });
@@ -77,7 +77,7 @@ const updateTenent = async (req, res) => {
 const deleteTenant = async (req, res) => {
     const { propertyid, id } = req.params;
     try {
-        const tenant = await Tenant.findOneAndDelete({ property: propertyid, _id: id });
+        const tenant = await Tenant.findOneAndDelete({ property_id: propertyid, _id: id });
         if (!tenant)
             return res.status(401).json({ message: `Tenant not found` });
 

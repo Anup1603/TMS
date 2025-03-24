@@ -65,7 +65,7 @@ const propertySchema = new mongoose.Schema({
         trim: true,
     },
 
-    user: {
+    user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,

@@ -1,7 +1,7 @@
 const Property = require("../model/propertyModel");
 
 const getProperty = async (req, res) => {
-    const allProperty = await Property.find({ user: req.user._id })
+    const allProperty = await Property.find({ user_id: req.user._id })
     return res.status(200).json(allProperty);
 };
 
@@ -25,7 +25,7 @@ const createProperty = async (req, res) => {
             city,
             state,
             property_owner,
-            user: req.user._id,
+            user_id: req.user._id,
         });
 
         return res.status(201).json({
