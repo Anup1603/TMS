@@ -12,27 +12,33 @@ const tenantSchema = new mongoose.Schema({
         unique: true,
     },
 
-    phone_no: {
+    phoneNo: {
         type: String,
         required: [true, "Phone Number is required"],
     },
 
-    gov_id: {
+    govermentID: {
         type: String,
         enum: {
-            values: ["Aadhar", "PAN card", "Passport", "Green card", "Driving License", "Property Document"],
+            values: ["Aadhar", "PAN card", "Passport", "Green card", "Driving License", "Property Document", "Voter ID"],
             message: '{VALUE} is not a valid government ID type',
         },
 
         required: [true, "Government ID is required"],
     },
 
-    lease_start_date: {
+    govermentIDNumber: {
+        type: String,
+        required: [true, "Government ID number is required"],
+        unique: true,
+    },
+
+    leaseStartDate: {
         type: Date,
         required: [true, "Lease start date is required"],
     },
 
-    lease_end_date: {
+    leaseEndDate: {
         type: Date,
         default: Date.now,
     },

@@ -6,7 +6,7 @@ const auth = async (req, res, next) => {
     const token = req.header('Authorization').replace('Bearer ', '');
 
     if (!token) {
-        return res.status(401).json({ msg: 'No token, authorization denied' });
+        return res.status(401).json({ message: "Access Denied. No Token Provided!" });
     }
 
     try {
@@ -14,7 +14,7 @@ const auth = async (req, res, next) => {
         req.user = await User.findById(decoded.id).select('-password');
         next();
     } catch (err) {
-        res.status(401).json({ msg: 'Not authorized. Token is not valid' });
+        res.status(401).json({ message: 'Not authorized. Token is not valid' });
     }
 };
 

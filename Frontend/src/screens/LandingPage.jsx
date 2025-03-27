@@ -1,12 +1,13 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
   Button,
   useTheme,
   useMediaQuery,
+  LinearProgress,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { keyframes } from "@emotion/react";
 
 // Keyframes for up-and-down animation
@@ -19,6 +20,27 @@ const floatAnimation = keyframes`
 const LandingPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check for mobile view
+  const navigate = useNavigate(); // For programmatic navigation
+
+  // State for progress loader
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (token && storedUser) {
+      navigate("/dashboard/property"); // Redirect to dashboard if logged in
+    }
+  }, [navigate]);
+
+  // Handle button click with loader
+  const handleButtonClick = (path) => {
+    setLoading(true); // Show loader
+    setTimeout(() => {
+      navigate(path); // Navigate after 500ms
+    }, 300);
+  };
 
   return (
     <Box
@@ -34,6 +56,20 @@ const LandingPage = () => {
         position: "relative", // Needed for absolute positioning of the logo
       }}
     >
+      {/* Progress Loader */}
+      {loading && (
+        <LinearProgress
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 9999,
+            // Ensure loader is above other elements
+          }}
+        />
+      )}
+
       {/* Logo in the Top-Left Corner */}
       <Box
         sx={{
@@ -98,7 +134,7 @@ const LandingPage = () => {
               width: "80%", // Adjust size as needed
               height: "80%",
               transform: "translate(25%, -25%)", // Adjust positioning
-              animation: `${floatAnimation} 3s ease-in-out infinite`, // Add animation
+              animation: `${floatAnimation} 2s ease-in-out infinite`, // Add animation
             }}
           >
             {/* First Image in Container (Left Half) */}
@@ -185,32 +221,30 @@ const LandingPage = () => {
             gap: 2, // Add spacing between buttons
           }}
         >
-          <Link to="/auth/register" style={{ textDecoration: "none" }}>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: "#836df7",
-                color: "white",
-                "&:hover": { backgroundColor: "#6a5bbd" },
-              }}
-            >
-              Register
-            </Button>
-          </Link>
-          <Link to="/auth/login" style={{ textDecoration: "none" }}>
-            <Button
-              variant="outlined"
-              size="large"
-              sx={{
-                borderColor: "#836df7",
-                color: "#836df7",
-                "&:hover": { borderColor: "#6a5bbd", color: "#6a5bbd" },
-              }}
-            >
-              Login
-            </Button>
-          </Link>
+          <Button
+            variant="contained"
+            size="large"
+            sx={{
+              backgroundColor: "#836df7",
+              color: "white",
+              "&:hover": { backgroundColor: "#6a5bbd" },
+            }}
+            onClick={() => handleButtonClick("/auth/register")}
+          >
+            Register
+          </Button>
+          <Button
+            variant="outlined"
+            size="large"
+            sx={{
+              borderColor: "#836df7",
+              color: "#836df7",
+              "&:hover": { borderColor: "#6a5bbd", color: "#6a5bbd" },
+            }}
+            onClick={() => handleButtonClick("/auth/login")}
+          >
+            Login
+          </Button>
         </Box>
       </Box>
     </Box>

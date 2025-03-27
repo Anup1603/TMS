@@ -8,10 +8,14 @@ import {
   useMediaQuery,
   IconButton,
   InputAdornment,
+  Snackbar,
+  Alert,
+  LinearProgress,
 } from "@mui/material";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { keyframes } from "@emotion/react";
+import axiosInstance from "../axiosInstance";
 
 // Keyframes for up-and-down animation
 const floatAnimation = keyframes`
@@ -25,15 +29,111 @@ const AuthPage = () => {
   const { authMode } = useParams(); // Get authMode from URL
   const navigate = useNavigate(); // For programmatic navigation
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check for mobile view
+
+  // State for form inputs
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // State for Snackbar (success/error messages)
+  const [message, setMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  // State for progress loader
+  const [loading, setLoading] = useState(false);
+
+  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  // Handle Snackbar close
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (authMode === "register" && password !== confirmPassword) {
+      setMessage("Passwords do not match");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+      return;
+    }
+
+    const userData = {
+      name,
+      email,
+      password,
+    };
+
+    setLoading(true); // Show loader
+
+    try {
+      if (authMode === "register") {
+        await registerUser(userData);
+      } else {
+        await loginUser(userData);
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage(error.response?.data?.message || "An error occurred");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    } finally {
+      setTimeout(() => {
+        setLoading(false); // Hide loader after 500ms
+      }, 500);
+    }
+  };
+
+  // Register user
+  const registerUser = async (userData) => {
+    const { data } = await axiosInstance.post("/api/users/register", userData);
+    setMessage("Registration Successful");
+    setSnackbarSeverity("success");
+    setOpenSnackbar(true);
+    setTimeout(() => {
+      navigate("/auth/login"); // Redirect to login page after registration
+    }, 500);
+  };
+
+  // Login user
+  const loginUser = async (userData) => {
+    const { data } = await axiosInstance.post("/api/users/login", userData);
+    localStorage.setItem("token", data.token); // Store JWT securely
+    if (data) {
+      localStorage.setItem("user", JSON.stringify(data)); // Store user data
+    }
+    // setUser(data); // Set user in App state
+    setMessage("Login Successful");
+    setSnackbarSeverity("success");
+    setOpenSnackbar(true);
+    setTimeout(() => {
+      navigate(`/dashboard/property`); // Redirect to dashboard after login
+    }, 500);
+  };
+
+  // Toggle between login and registration forms
   const toggleForm = () => {
-    // Navigate to the other form
-    navigate(`/auth/${authMode === "register" ? "login" : "register"}`);
+    setLoading(true); // Show loader
+    setTimeout(() => {
+      navigate(`/auth/${authMode === "register" ? "login" : "register"}`);
+      setLoading(false); // Hide loader
+    }, 300);
+  };
+
+  const toggleHomePage = () => {
+    setLoading(true); // Show loader
+    setTimeout(() => {
+      navigate("/");
+      setLoading(false); // Hide loader
+    }, 300);
   };
 
   return (
@@ -50,6 +150,35 @@ const AuthPage = () => {
         position: "relative",
       }}
     >
+      {/* Progress Loader */}
+      {loading && (
+        <LinearProgress
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 9999, // Ensure loader is above other elements
+          }}
+        />
+      )}
+
+      {/* Snackbar for success/error messages */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={5000} // 5 seconds
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position at top-center
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          variant="filled"
+        >
+          {message}
+        </Alert>
+      </Snackbar>
+
       {/* Logo in the Top-Left Corner */}
       <Box
         sx={{
@@ -59,17 +188,17 @@ const AuthPage = () => {
           zIndex: 1, // Ensure the logo is above other elements
         }}
       >
-        <Link to="/">
-          <img
-            src="/Logo3.webp" // Replace with your logo image URL
-            alt="TMS Portal Logo"
-            style={{
-              width: "70px", // Adjust size as needed
-              height: "auto",
-              borderRadius: 50, // Add border radius for a modern look
-            }}
-          />
-        </Link>
+        <img
+          src="/Logo3.webp" // Replace with your logo image URL
+          alt="TMS Portal Logo"
+          style={{
+            width: "70px", // Adjust size as needed
+            height: "auto",
+            borderRadius: 50, // Add border radius for a modern look
+            cursor: "pointer", // Add cursor pointer on hover
+          }}
+          onClick={toggleHomePage}
+        />
       </Box>
 
       {/* Left Section: Images */}
@@ -114,7 +243,7 @@ const AuthPage = () => {
               width: "80%", // Adjust size as needed
               height: "80%",
               transform: "translate(25%, -25%)", // Adjust positioning
-              animation: `${floatAnimation} 3s ease-in-out infinite`, // Add animation
+              animation: `${floatAnimation} 2s ease-in-out infinite`, // Add animation
             }}
           >
             {/* First Image in Container (Left Half) */}
@@ -181,6 +310,7 @@ const AuthPage = () => {
         </Typography>
         <Box
           component="form"
+          onSubmit={handleSubmit}
           sx={{
             width: isMobile ? "100%" : "70%", // Full width on mobile, half on desktop
             display: "flex",
@@ -188,62 +318,61 @@ const AuthPage = () => {
             gap: 2, // Add spacing between form fields
           }}
         >
-          {authMode === "register" ? (
-            <>
-              <TextField label="Name" fullWidth required />
-              <TextField label="Email" type="email" fullWidth required />
-              <TextField
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                fullWidth
-                required
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={togglePasswordVisibility} edge="end">
-                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <TextField
-                label="Confirm Password"
-                type={showPassword ? "text" : "password"}
-                fullWidth
-                required
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={togglePasswordVisibility} edge="end">
-                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <TextField label="Email" type="email" fullWidth required />
-              <TextField
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                fullWidth
-                required
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={togglePasswordVisibility} edge="end">
-                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </>
+          {authMode === "register" && (
+            <TextField
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+              required
+            />
+          )}
+          <TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+            required
+          />
+          <TextField
+            label="Password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+            required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          {authMode === "register" && (
+            <TextField
+              label="Confirm Password"
+              type={showPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              fullWidth
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={togglePasswordVisibility} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
           )}
           <Button
+            type="submit"
             variant="contained"
             size="large"
             sx={{

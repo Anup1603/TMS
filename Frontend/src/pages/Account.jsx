@@ -1,7 +1,19 @@
 import { Box, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Account() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (!(token && storedUser)) {
+      navigate("/"); // Redirect to homepage if not logged in
+    }
+  }, [navigate]);
+
   return (
     <>
       <Box

@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const propertySchema = new mongoose.Schema({
-    property_name: {
+    propertyName: {
         type: String,
         required: [true, "Property Name is required"],
         trim: true,
     },
 
-    flat_no: {
+    flatNo: {
         type: String,
         required: [true, "Flat number is required"],
         trim: true,
@@ -26,7 +26,7 @@ const propertySchema = new mongoose.Schema({
         default: 'Available',
     },
 
-    rent: {
+    rentAmount: {
         type: Number,
         required: [true, "Rent amount is required"],
         min: [0, "Rent must be a positive number"],
@@ -52,14 +52,14 @@ const propertySchema = new mongoose.Schema({
     },
 
 
-    pic: {
+    image: {
         type: String,
         // required: true,
         default:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqSSzYyHasXOWKgS7naaJ36bn3kNiNziusDA&s",
+            "https://images.pexels.com/photos/439227/pexels-photo-439227.jpeg?auto=compress&cs=tinysrgb&w=600",
     },
 
-    property_owner: {
+    propertyOwner: {
         type: String,
         required: [true, "Property owner is required"],
         trim: true,

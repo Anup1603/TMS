@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -13,6 +13,7 @@ import {
   CssBaseline,
   Box,
   styled,
+  LinearProgress,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
@@ -36,7 +37,10 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 const Dashboard = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -46,19 +50,63 @@ const Dashboard = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleButtonClick = (path) => {
+    setLoading(true);
+    setTimeout(() => {
+      navigate(path);
+      setLoading(false);
+    }, 300);
+  };
+
+  const isActive = (paths) => {
+    return paths.some((path) => {
+      // Exact match
+      if (location.pathname === path) return true;
+
+      // Wildcard match for nested routes
+      if (path.endsWith("/*")) {
+        const basePath = path.slice(0, -2);
+        return location.pathname.startsWith(basePath);
+      }
+
+      return false;
+    });
+  };
+
   const topMenuItems = [
-    { text: "Property", icon: <HomeIcon />, path: "/dashboard/property" },
-    { text: "Tenant", icon: <PeopleIcon />, path: "/dashboard/tenant" },
-    { text: "Billing", icon: <PaymentIcon />, path: "/dashboard/billing" },
+    {
+      text: "Property",
+      icon: <HomeIcon />,
+      path: `/dashboard/property`,
+      matchPaths: ["/dashboard/property", "/dashboard/property/*"],
+    },
+    {
+      text: "Tenant",
+      icon: <PeopleIcon />,
+      path: `/dashboard/tenant`,
+      matchPaths: ["/dashboard/tenant", "/dashboard/tenant/*"],
+    },
+    {
+      text: "Billing",
+      icon: <PaymentIcon />,
+      path: `/dashboard/billing`,
+      matchPaths: ["/dashboard/billing", "/dashboard/billing/*"],
+    },
   ];
 
   const bottomMenuItems = [
     {
       text: "Account",
       icon: <AccountCircleIcon />,
-      path: "/dashboard/account",
+      path: `/dashboard/account`,
+      matchPaths: ["/dashboard/account"],
     },
-    { text: "Setting", icon: <SettingsIcon />, path: "/dashboard/setting" },
+    {
+      text: "Setting",
+      icon: <SettingsIcon />,
+      path: `/dashboard/setting`,
+      matchPaths: ["/dashboard/setting"],
+    },
   ];
 
   const drawer = (
@@ -77,29 +125,31 @@ const Dashboard = () => {
       <List>
         {topMenuItems.map((item) => (
           <ListItem
-            button
             key={item.text}
             component={Link}
             to={item.path}
             sx={{
-              backgroundColor:
-                location.pathname === item.path ? "#836df7" : "inherit",
-              color: location.pathname === item.path ? "#fff" : "inherit",
+              backgroundColor: isActive(item.matchPaths)
+                ? "#836df7"
+                : "inherit",
+              color: isActive(item.matchPaths) ? "#fff" : "inherit",
               "&:hover": {
-                backgroundColor:
-                  location.pathname === item.path ? "#836df7" : "#f5f5f5",
+                backgroundColor: isActive(item.matchPaths)
+                  ? "#836df7"
+                  : "#f5f5f5",
               },
               minHeight: 48,
               justifyContent: isSidebarOpen ? "initial" : "center",
               px: 2.5,
             }}
+            onClick={() => handleButtonClick(item.path)}
           >
             <ListItemIcon
               sx={{
                 minWidth: 0,
                 mr: isSidebarOpen ? 3 : "auto",
                 justifyContent: "center",
-                color: location.pathname === item.path ? "#fff" : "inherit",
+                color: isActive(item.matchPaths) ? "#fff" : "inherit",
               }}
             >
               {item.icon}
@@ -114,34 +164,34 @@ const Dashboard = () => {
         ))}
       </List>
       <Box sx={{ marginTop: "auto", marginBottom: "30%" }}>
-        {" "}
-        {/* Position bottom items 30% above the bottom */}
         <List>
           {bottomMenuItems.map((item) => (
             <ListItem
-              button
               key={item.text}
               component={Link}
               to={item.path}
               sx={{
-                backgroundColor:
-                  location.pathname === item.path ? "#836df7" : "inherit",
-                color: location.pathname === item.path ? "#fff" : "inherit",
+                backgroundColor: isActive(item.matchPaths)
+                  ? "#836df7"
+                  : "inherit",
+                color: isActive(item.matchPaths) ? "#fff" : "inherit",
                 "&:hover": {
-                  backgroundColor:
-                    location.pathname === item.path ? "#836df7" : "#f5f5f5",
+                  backgroundColor: isActive(item.matchPaths)
+                    ? "#836df7"
+                    : "#f5f5f5",
                 },
                 minHeight: 48,
                 justifyContent: isSidebarOpen ? "initial" : "center",
                 px: 2.5,
               }}
+              onClick={() => handleButtonClick(item.path)}
             >
               <ListItemIcon
                 sx={{
                   minWidth: 0,
                   mr: isSidebarOpen ? 3 : "auto",
                   justifyContent: "center",
-                  color: location.pathname === item.path ? "#fff" : "inherit",
+                  color: isActive(item.matchPaths) ? "#fff" : "inherit",
                 }}
               >
                 {item.icon}
@@ -162,6 +212,19 @@ const Dashboard = () => {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
+
+      {loading && (
+        <LinearProgress
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 9999,
+          }}
+        />
+      )}
+
       <AppBar
         position="fixed"
         sx={{
@@ -179,14 +242,14 @@ const Dashboard = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Link to="/dashboard/property">
+          <Link to={`/dashboard/property`}>
             <img
-              src="/Logo3.webp" // Replace with your logo image URL
+              src="/Logo3.webp"
               alt="TMS Portal Logo"
               style={{
-                width: "50px", // Adjust size as needed
+                width: "50px",
                 height: "auto",
-                borderRadius: 50, // Add border radius for a modern look
+                borderRadius: 50,
               }}
             />
           </Link>
@@ -212,7 +275,7 @@ const Dashboard = () => {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
-              borderRadius: 2, // Add border radius to sidebar
+              borderRadius: 2,
             },
           }}
         >
@@ -226,7 +289,7 @@ const Dashboard = () => {
               boxSizing: "border-box",
               width: isSidebarOpen ? drawerWidth : 56,
               transition: "width 0.3s ease",
-              borderRadius: 2, // Add border radius to sidebar
+              borderRadius: 2,
             },
           }}
           open

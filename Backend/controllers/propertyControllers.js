@@ -7,24 +7,24 @@ const getProperty = async (req, res) => {
 
 
 const createProperty = async (req, res) => {
-    const { property_name, flat_no, bhk, status, rent, address, city, state, property_owner }
+    const { propertyName, flatNo, bhk, status, rentAmount, address, city, state, propertyOwner }
         = req.body;
 
     try {
-        if (!property_name || !flat_no || !bhk || !status || !rent || !address || !city || !state || !property_owner) {
+        if (!propertyName || !flatNo || !bhk || !status || !rentAmount || !address || !city || !state || !propertyOwner) {
             return res.status(400).json({ message: "Please fill all the required fields" });
         }
 
         const property = await Property.create({
-            property_name,
-            flat_no,
+            propertyName,
+            flatNo,
             bhk,
             status,
-            rent,
+            rentAmount,
             address,
             city,
             state,
-            property_owner,
+            propertyOwner,
             user_id: req.user._id,
         });
 
