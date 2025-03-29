@@ -47,6 +47,7 @@ import {
   Avatar,
   useMediaQuery,
   useTheme,
+  TextField,
 } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -61,6 +62,7 @@ function Tenant() {
   const [openModal, setOpenModal] = useState(false);
   const [selectedTenant, setSelectedTenant] = useState(null);
   const [property, setProperty] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // Search term
 
   const fetchTenants = async () => {
     try {
@@ -89,10 +91,21 @@ function Tenant() {
     setOpenModal(false);
   };
 
+  const handleSearchChange = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+  };
+
   const getRandomColor = () => {
     const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#FFC300"];
     return colors[Math.floor(Math.random() * colors.length)];
   };
+
+  const filteredTenants = searchTerm
+    ? tenants.filter((tenant) =>
+        tenant.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : tenants;
 
   // Responsive table cell rendering
   const renderTableCell = (content, align = "left") => (
@@ -103,10 +116,7 @@ function Tenant() {
 
   return (
     <Box sx={{ p: isMobile ? 1 : 3 }}>
-      {/* Breadcrumbs */}
-      <Box sx={{ mb: 2 }}>
-        <TenantBreadCrumbs />
-      </Box>
+      <Box sx={{ mb: 2 }}>{/* <TenantBreadCrumbs /> */}</Box>
 
       {/* Header */}
       <Box
@@ -115,9 +125,27 @@ function Tenant() {
           justifyContent: "space-between",
           alignItems: "center",
           mb: 3,
+          flexWrap: "wrap",
+          gap: 1,
         }}
       >
-        <Typography variant={isMobile ? "h5" : "h4"}>Tenants</Typography>
+        <Typography
+          sx={{ flexGrow: 1, minWidth: "150px" }}
+          variant={isMobile ? "h5" : "h4"}
+        >
+          Tenants
+        </Typography>
+        <TextField
+          autoComplete="off"
+          label="Search"
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearchChange} // Trigger search on input change
+          sx={{
+            mr: 1,
+            width: { xs: "100%", sm: "auto", md: 200 }, // Responsive width
+          }}
+        />
       </Box>
 
       {/* Table */}
@@ -144,80 +172,93 @@ function Tenant() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tenants.map((tenant) => (
-              <TableRow
-                key={tenant._id}
-                onClick={() => handleOpenModal(tenant)}
-                hover
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
-                  cursor: "pointer",
-                  "&:hover": { backgroundColor: "action.hover" },
-                }}
-              >
-                {!isMobile ? (
-                  <>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        py: isMobile ? 1 : 2,
-                      }}
-                    >
-                      <Avatar
+            {filteredTenants.length > 0 ? (
+              filteredTenants.map((tenant) => (
+                <TableRow
+                  key={tenant._id}
+                  onClick={() => handleOpenModal(tenant)}
+                  hover
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                    cursor: "pointer",
+                    "&:hover": { backgroundColor: "action.hover" },
+                  }}
+                >
+                  {!isMobile ? (
+                    <>
+                      <TableCell
+                        component="th"
+                        scope="row"
                         sx={{
-                          mr: 2,
-                          bgcolor: getRandomColor(),
-                          width: 32,
-                          height: 32,
+                          display: "flex",
+                          alignItems: "center",
+                          py: isMobile ? 1 : 2,
                         }}
                       >
-                        {tenant.name.charAt(0)}
-                      </Avatar>
-                      {tenant.name}
-                    </TableCell>
-                    {renderTableCell(tenant.email)}
-                    {renderTableCell(tenant.phoneNo)}
-                    {!isTablet &&
-                      renderTableCell(
-                        tenant.property_id?.propertyName || "N/A"
-                      )}
-                  </>
-                ) : (
-                  <TableCell component="th" scope="row" sx={{ py: 1 }}>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Avatar
-                        sx={{
-                          mr: 2,
-                          bgcolor: getRandomColor(),
-                          width: 32,
-                          height: 32,
-                        }}
-                      >
-                        {tenant.name.charAt(0)}
-                      </Avatar>
-                      <Box>
-                        <Typography variant="subtitle2">
-                          {tenant.name}
-                        </Typography>
-                        <Typography variant="caption" display="block">
-                          {tenant.phoneNo}
-                        </Typography>
+                        <Avatar
+                          sx={{
+                            mr: 2,
+                            bgcolor: getRandomColor(),
+                            width: 32,
+                            height: 32,
+                          }}
+                        >
+                          {tenant.name.charAt(0)}
+                        </Avatar>
+                        {tenant.name}
+                      </TableCell>
+                      {renderTableCell(tenant.email)}
+                      {renderTableCell(tenant.phoneNo)}
+                      {!isTablet &&
+                        renderTableCell(
+                          tenant.property_id?.propertyName || "N/A"
+                        )}
+                    </>
+                  ) : (
+                    <TableCell component="th" scope="row" sx={{ py: 1 }}>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Avatar
+                          sx={{
+                            mr: 2,
+                            bgcolor: getRandomColor(),
+                            width: 32,
+                            height: 32,
+                          }}
+                        >
+                          {tenant.name.charAt(0)}
+                        </Avatar>
+                        <Box>
+                          <Typography variant="subtitle2">
+                            {tenant.name}
+                          </Typography>
+                          <Typography variant="caption" display="block">
+                            {tenant.phoneNo}
+                          </Typography>
+                        </Box>
                       </Box>
-                    </Box>
-                  </TableCell>
-                )}
-                {renderTableCell(
-                  <Chip
-                    label={tenant.status || "Active"}
-                    color={tenant.status === "Inactive" ? "error" : "success"}
-                    size={isMobile ? "small" : "medium"}
-                  />
-                )}
+                    </TableCell>
+                  )}
+                  {renderTableCell(
+                    <Chip
+                      label={tenant.status || "Active"}
+                      color={tenant.status === "Inactive" ? "error" : "success"}
+                      size={isMobile ? "small" : "medium"}
+                    />
+                  )}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={isMobile ? 2 : isTablet ? 4 : 5}>
+                  <Typography
+                    variant="h6"
+                    sx={{ textAlign: "center", width: "100%" }}
+                  >
+                    No Tenant found.
+                  </Typography>
+                </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -388,7 +429,6 @@ function Tenant() {
                         <Box
                           sx={{
                             display: "flex",
-                            alignItems: "center",
                             mt: 1,
                             flexDirection: isMobile ? "column" : "row",
                             alignItems: isMobile ? "flex-start" : "center",

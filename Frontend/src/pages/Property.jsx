@@ -1,4 +1,12 @@
-import { Box, Typography, Button, LinearProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  LinearProgress,
+  TextField,
+} from "@mui/material";
+import axios from "../axiosInstance";
+
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PropertyBreadcrumbs from "../components/PropertyBreadcrumbs";
@@ -6,6 +14,26 @@ import PropertyBreadcrumbs from "../components/PropertyBreadcrumbs";
 const Property = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [properties, setProperties] = useState([]); // Stores all properties
+  const [searchTerm, setSearchTerm] = useState(""); // Search term
+
+  const fetchProperties = async () => {
+    try {
+      const response = await axios.get("/api/property/");
+      setProperties(response.data);
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const handleSearchChange = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+  };
 
   const handleCreateProperty = () => {
     setLoading(true);
@@ -40,17 +68,35 @@ const Property = () => {
           justifyContent: "space-between",
           alignItems: "center",
           mb: 3,
+          flexWrap: "wrap",
+          gap: 1,
         }}
       >
-        <Typography variant="h4">Properties</Typography>
+        <Typography variant="h4" sx={{ flexGrow: 1, minWidth: "150px" }}>
+          Properties
+        </Typography>
+
+        <TextField
+          autoComplete="off"
+          label="Search"
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearchChange} // Trigger search on input change
+          sx={{
+            mr: 1,
+            width: { xs: "100%", sm: "auto", md: 200 }, // Responsive width
+          }}
+        />
+
         <Button
           variant="contained"
           sx={{
             backgroundColor: "#836df7",
             color: "white",
             "&:hover": { backgroundColor: "#6a5bbd" },
+            width: { xs: "100%", sm: "auto" }, // Button takes full width on small screens
           }}
-          onClick={() => handleCreateProperty()}
+          onClick={handleCreateProperty}
           startIcon={<span>+</span>}
         >
           Create Property
@@ -58,7 +104,7 @@ const Property = () => {
       </Box>
 
       {/* Nested routes will be rendered here */}
-      <Outlet />
+      <Outlet context={{ properties, searchTerm }} />
     </Box>
   );
 };

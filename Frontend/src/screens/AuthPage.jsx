@@ -115,7 +115,7 @@ const AuthPage = () => {
     setSnackbarSeverity("success");
     setOpenSnackbar(true);
     setTimeout(() => {
-      navigate(`/dashboard/property`); // Redirect to dashboard after login
+      navigate(`/dashboard/overview`); // Redirect to dashboard after login
     }, 500);
   };
 

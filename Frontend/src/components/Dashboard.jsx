@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -14,6 +14,8 @@ import {
   Box,
   styled,
   LinearProgress,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
@@ -23,6 +25,8 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 
 const drawerWidth = 240;
 
@@ -35,12 +39,20 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 const Dashboard = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
   const [loading, setLoading] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  }, [isMobile]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -50,64 +62,73 @@ const Dashboard = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleButtonClick = (path) => {
+  const handleNavigation = (path) => {
     setLoading(true);
     setTimeout(() => {
       navigate(path);
       setLoading(false);
+      if (isMobile) setMobileOpen(false);
     }, 300);
   };
 
-  const isActive = (paths) => {
-    return paths.some((path) => {
-      // Exact match
-      if (location.pathname === path) return true;
+  const isActive = useMemo(() => {
+    return (paths) => {
+      return paths.some((path) => {
+        if (location.pathname === path) return true;
+        if (path.endsWith("/*")) {
+          const basePath = path.slice(0, -2);
+          return location.pathname.startsWith(basePath);
+        }
+        return false;
+      });
+    };
+  }, [location.pathname]);
 
-      // Wildcard match for nested routes
-      if (path.endsWith("/*")) {
-        const basePath = path.slice(0, -2);
-        return location.pathname.startsWith(basePath);
-      }
-
-      return false;
-    });
-  };
-
-  const topMenuItems = [
-    {
-      text: "Property",
-      icon: <HomeIcon />,
-      path: `/dashboard/property`,
-      matchPaths: ["/dashboard/property", "/dashboard/property/*"],
-    },
-    {
-      text: "Tenant",
-      icon: <PeopleIcon />,
-      path: `/dashboard/tenant`,
-      matchPaths: ["/dashboard/tenant", "/dashboard/tenant/*"],
-    },
-    {
-      text: "Billing",
-      icon: <PaymentIcon />,
-      path: `/dashboard/billing`,
-      matchPaths: ["/dashboard/billing", "/dashboard/billing/*"],
-    },
-  ];
-
-  const bottomMenuItems = [
-    {
-      text: "Account",
-      icon: <AccountCircleIcon />,
-      path: `/dashboard/account`,
-      matchPaths: ["/dashboard/account"],
-    },
-    {
-      text: "Setting",
-      icon: <SettingsIcon />,
-      path: `/dashboard/setting`,
-      matchPaths: ["/dashboard/setting"],
-    },
-  ];
+  const menuItems = useMemo(
+    () => ({
+      top: [
+        {
+          text: "Overview",
+          icon: <DashboardCustomizeIcon />,
+          path: "/dashboard/overview",
+          matchPaths: ["/dashboard/overview", "/dashboard/overview/*"],
+        },
+        {
+          text: "Property",
+          icon: <HomeIcon />,
+          path: "/dashboard/property",
+          matchPaths: ["/dashboard/property", "/dashboard/property/*"],
+        },
+        {
+          text: "Tenant",
+          icon: <PeopleIcon />,
+          path: "/dashboard/tenant",
+          matchPaths: ["/dashboard/tenant", "/dashboard/tenant/*"],
+        },
+        {
+          text: "Billing",
+          icon: <PaymentIcon />,
+          path: "/dashboard/billing",
+          matchPaths: ["/dashboard/billing", "/dashboard/billing/*"],
+        },
+      ],
+      bottom: [
+        {
+          text: "Account",
+          icon: <AccountCircleIcon />,
+          path: "/dashboard/account",
+          matchPaths: ["/dashboard/account"],
+        },
+        {
+          text: "Setting",
+          icon: <SettingsIcon />,
+          path: "/dashboard/setting",
+          matchPaths: ["/dashboard/setting"],
+        },
+      ],
+    }),
+    []
+  );
 
   const drawer = (
     <Box
@@ -115,15 +136,22 @@ const Dashboard = () => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
+        overflow: "hidden",
       }}
     >
       <DrawerHeader>
-        <IconButton onClick={handleSidebarToggle}>
-          {isSidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-        </IconButton>
+        {!isMobile && (
+          <IconButton onClick={handleSidebarToggle}>
+            {isSidebarOpen ? (
+              <ChevronLeftIcon sx={{ color: "#836df7" }} />
+            ) : (
+              <ChevronRightIcon sx={{ color: "#836df7" }} />
+            )}
+          </IconButton>
+        )}
       </DrawerHeader>
-      <List>
-        {topMenuItems.map((item) => (
+      <List sx={{ flexGrow: 1 }}>
+        {menuItems.top.map((item) => (
           <ListItem
             key={item.text}
             component={Link}
@@ -136,13 +164,19 @@ const Dashboard = () => {
               "&:hover": {
                 backgroundColor: isActive(item.matchPaths)
                   ? "#836df7"
-                  : "#f5f5f5",
+                  : theme.palette.action.hover,
               },
               minHeight: 48,
               justifyContent: isSidebarOpen ? "initial" : "center",
               px: 2.5,
+              transition: theme.transitions.create(
+                ["background-color", "color"],
+                {
+                  duration: theme.transitions.duration.shortest,
+                }
+              ),
             }}
-            onClick={() => handleButtonClick(item.path)}
+            onClick={() => handleNavigation(item.path)}
           >
             <ListItemIcon
               sx={{
@@ -154,18 +188,21 @@ const Dashboard = () => {
             >
               {item.icon}
             </ListItemIcon>
-            {isSidebarOpen && (
-              <ListItemText
-                primary={item.text}
-                sx={{ opacity: isSidebarOpen ? 1 : 0 }}
-              />
-            )}
+            <ListItemText
+              primary={item.text}
+              sx={{
+                opacity: isSidebarOpen ? 1 : 0,
+                transition: theme.transitions.create("opacity", {
+                  duration: theme.transitions.duration.shortest,
+                }),
+              }}
+            />
           </ListItem>
         ))}
       </List>
-      <Box sx={{ marginTop: "auto", marginBottom: "30%" }}>
+      <Box sx={{ marginTop: "auto", mb: 2 }}>
         <List>
-          {bottomMenuItems.map((item) => (
+          {menuItems.bottom.map((item) => (
             <ListItem
               key={item.text}
               component={Link}
@@ -178,13 +215,19 @@ const Dashboard = () => {
                 "&:hover": {
                   backgroundColor: isActive(item.matchPaths)
                     ? "#836df7"
-                    : "#f5f5f5",
+                    : theme.palette.action.hover,
                 },
                 minHeight: 48,
                 justifyContent: isSidebarOpen ? "initial" : "center",
                 px: 2.5,
+                transition: theme.transitions.create(
+                  ["background-color", "color"],
+                  {
+                    duration: theme.transitions.duration.shortest,
+                  }
+                ),
               }}
-              onClick={() => handleButtonClick(item.path)}
+              onClick={() => handleNavigation(item.path)}
             >
               <ListItemIcon
                 sx={{
@@ -196,12 +239,15 @@ const Dashboard = () => {
               >
                 {item.icon}
               </ListItemIcon>
-              {isSidebarOpen && (
-                <ListItemText
-                  primary={item.text}
-                  sx={{ opacity: isSidebarOpen ? 1 : 0 }}
-                />
-              )}
+              <ListItemText
+                primary={item.text}
+                sx={{
+                  opacity: isSidebarOpen ? 1 : 0,
+                  transition: theme.transitions.create("opacity", {
+                    duration: theme.transitions.duration.shortest,
+                  }),
+                }}
+              />
             </ListItem>
           ))}
         </List>
@@ -212,7 +258,6 @@ const Dashboard = () => {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-
       {loading && (
         <LinearProgress
           sx={{
@@ -224,45 +269,83 @@ const Dashboard = () => {
           }}
         />
       )}
-
       <AppBar
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
           backgroundColor: "#836df7",
+          boxShadow: "none",
         }}
       >
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+          {!isMobile && (
+            <IconButton
+              color="inherit"
+              onClick={handleSidebarToggle}
+              sx={{ mr: 1 }}
+            >
+              <MenuOpenIcon />
+            </IconButton>
+          )}
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 1 }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Link
+            to="/dashboard/overview"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              textDecoration: "none",
+              color: "inherit",
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Link to={`/dashboard/property`}>
             <img
               src="/Logo3.webp"
               alt="TMS Portal Logo"
               style={{
-                width: "50px",
-                height: "auto",
-                borderRadius: 50,
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                marginRight: "12px",
+                border: "2px solid white",
               }}
             />
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{
+                fontWeight: 600,
+                transition: theme.transitions.create("opacity", {
+                  duration: theme.transitions.duration.standard,
+                }),
+                opacity: isMobile || isSidebarOpen ? 1 : 0,
+                width: isMobile || isSidebarOpen ? "auto" : 0,
+                overflow: "hidden",
+              }}
+            >
+              TMS Portal
+            </Typography>
           </Link>
-          <Typography variant="h6" noWrap sx={{ ml: 2 }}>
-            TMS Portal
-          </Typography>
         </Toolbar>
       </AppBar>
       <Box
         component="nav"
         sx={{
-          width: { sm: isSidebarOpen ? drawerWidth : 56 },
+          width: { sm: isSidebarOpen ? drawerWidth : 72 },
           flexShrink: { sm: 0 },
+          transition: theme.transitions.create("width", {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
         }}
       >
         <Drawer
@@ -275,7 +358,6 @@ const Dashboard = () => {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
-              borderRadius: 2,
             },
           }}
         >
@@ -287,9 +369,13 @@ const Dashboard = () => {
             display: { xs: "none", sm: "block" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
-              width: isSidebarOpen ? drawerWidth : 56,
-              transition: "width 0.3s ease",
-              borderRadius: 2,
+              width: isSidebarOpen ? drawerWidth : 72,
+              borderRight: "none",
+              backgroundColor: theme.palette.background.default,
+              transition: theme.transitions.create("width", {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
             },
           }}
           open
@@ -302,8 +388,14 @@ const Dashboard = () => {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - ${isSidebarOpen ? drawerWidth : 56}px)` },
-          transition: "width 0.3s ease",
+          width: {
+            xs: "100%",
+            sm: `calc(100% - ${isSidebarOpen ? drawerWidth : 72}px)`,
+          },
+          transition: theme.transitions.create(["width", "margin"], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
         }}
       >
         <DrawerHeader />

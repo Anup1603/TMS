@@ -32,9 +32,7 @@ function Setting() {
         }}
       >
         <Typography>Settings Page</Typography>
-        <Button variant="contained" color="primary" onClick={handleLogout}>
-          Log Out
-        </Button>
+        
       </Box>
     </>
   );

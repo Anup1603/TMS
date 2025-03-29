@@ -27,7 +27,7 @@ const PropertyDetails = () => {
   const navigate = useNavigate();
   const [property, setProperty] = useState(null);
   const [tenant, setTenant] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +46,7 @@ const PropertyDetails = () => {
       } catch (error) {
         console.error("Error fetching property data:", error);
       } finally {
-        setLoading(false);
+        setLoader(false);
       }
     };
 

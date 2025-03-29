@@ -101,6 +101,7 @@ import PropertyDetails from "./propertyScreens/PropertyDetails";
 import CreateTenant from "./tenantScreens/CreateTenant";
 import TenantList from "./tenantScreens/TenantList";
 import TenantDetails from "./tenantScreens/TenantDetails";
+import OverView from "./pages/OverView";
 
 function App() {
   // const [user, setUser] = useState(null);
@@ -135,7 +136,9 @@ function App() {
         {/* Protected routes */}
         <Route path="/dashboard" element={<Dashboard />}>
           {/* Dashboard nested routes */}
-          <Route index element={<Navigate to="property" replace />} />
+          {/* <Route index element={<Navigate to="property" replace />} /> */}
+
+          <Route path="overview" element={<OverView />} />
 
           {/* Property routes */}
           <Route path="property" element={<Property />}>
