@@ -28,7 +28,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 
-const drawerWidth = 240;
+const drawerWidth = 230;
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
