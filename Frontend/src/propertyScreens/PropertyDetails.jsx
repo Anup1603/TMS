@@ -140,7 +140,7 @@ const PropertyDetails = () => {
 
   return (
     <Box sx={{ p: isMobile ? 0 : 3 }}>
-      {loading && (
+      {/* {loading && (
         <LinearProgress
           sx={{
             position: "fixed",
@@ -154,7 +154,7 @@ const PropertyDetails = () => {
             },
           }}
         />
-      )}
+      )} */}
 
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
         <Box>
