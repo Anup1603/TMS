@@ -42,26 +42,6 @@ function Account() {
     getUser();
   }, []);
 
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "70vh",
-          gap: 2,
-        }}
-      >
-        <CircularProgress size={60} thickness={4} />
-        <Typography variant="h6" color="text.secondary">
-          Loading Account Details ...
-        </Typography>
-      </Box>
-    );
-  }
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -160,6 +140,26 @@ function Account() {
     const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#FFC300"];
     return colors[Math.floor(Math.random() * colors.length)];
   };
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "70vh",
+          gap: 2,
+        }}
+      >
+        <CircularProgress size={60} thickness={4} />
+        <Typography variant="h6" color="text.secondary">
+          Loading Account Details ...
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
