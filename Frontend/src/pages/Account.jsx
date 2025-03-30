@@ -21,21 +21,45 @@ import axios from "../axiosInstance";
 function Account() {
   const navigate = useNavigate();
   const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const fetchUser = JSON.parse(localStorage.getItem("user")) || {};
 
   const getUser = async () => {
+    setLoading(true);
     try {
       const { data } = await axios.get(`/api/users/${fetchUser._id}`);
       setUser(data);
     } catch (error) {
       console.error("Error fetching user data:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     getUser();
   }, []);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "70vh",
+          gap: 2,
+        }}
+      >
+        <CircularProgress size={60} thickness={4} />
+        <Typography variant="h6" color="text.secondary">
+          Loading Account Details ...
+        </Typography>
+      </Box>
+    );
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -174,6 +198,7 @@ function Account() {
         }}
       >
         {/* User Profile Section */}
+
         <Box
           sx={{
             display: "flex",

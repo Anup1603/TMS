@@ -30,15 +30,24 @@ const PropertyDetails = () => {
   const [property, setProperty] = useState(null);
   const [tenant, setTenant] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
+        setLoading(true);
+        setError(null);
+
         // Fetch property details
         const propertyRes = await axios.get(`/api/property/${id}`);
+
+        if (!propertyRes.data) {
+          setError("No property data available");
+          return;
+        }
+
         setProperty(propertyRes.data);
 
         // Check if property has a tenant_id before making the request
@@ -50,6 +59,7 @@ const PropertyDetails = () => {
         }
       } catch (error) {
         console.error("Error fetching property data:", error);
+        setError("Failed to fetch property details");
       } finally {
         setLoading(false);
       }
@@ -59,15 +69,73 @@ const PropertyDetails = () => {
   }, [id]);
 
   const handleCreateTenant = () => {
-    setLoading(true);
-    setTimeout(() => {
-      navigate(`create-tenant`);
-      setLoading(false);
-    }, 100);
+    navigate(`create-tenant`);
   };
 
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "70vh",
+          gap: 2,
+        }}
+      >
+        <CircularProgress size={60} thickness={4} />
+        <Typography variant="h6" color="text.secondary">
+          Loading Property Details ...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        sx={{
+          p: isMobile ? 2 : 3,
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "60vh",
+        }}
+      >
+        <Typography variant="h6" color="error" gutterBottom>
+          {error}
+        </Typography>
+        <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate(-1)}>
+          Go Back
+        </Button>
+      </Box>
+    );
+  }
+
   if (!property) {
-    return <Typography>Property not found</Typography>;
+    return (
+      <Box
+        sx={{
+          p: isMobile ? 2 : 3,
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "60vh",
+        }}
+      >
+        <Typography variant="h6" gutterBottom>
+          No Property Available
+        </Typography>
+        <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate(-1)}>
+          Go Back
+        </Button>
+      </Box>
+    );
   }
 
   return (
@@ -87,6 +155,7 @@ const PropertyDetails = () => {
           }}
         />
       )}
+
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
         <Box>
           <Button
@@ -263,7 +332,7 @@ const PropertyDetails = () => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => handleCreateTenant()}
+            onClick={handleCreateTenant}
             sx={{
               backgroundColor: "#836df7",
               color: "white",
