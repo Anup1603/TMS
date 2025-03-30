@@ -26,10 +26,6 @@ const Property = () => {
     }
   };
 
-  useEffect(() => {
-    fetchProperties();
-  }, []);
-
   const handleSearchChange = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
@@ -44,7 +40,7 @@ const Property = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, backgroundColor: "#f5f7fa" }}>
       {loading && (
         <LinearProgress
           sx={{
@@ -53,6 +49,10 @@ const Property = () => {
             left: 0,
             right: 0,
             zIndex: 9999,
+            backgroundColor: "#836df7",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#fff",
+            },
           }}
         />
       )}
@@ -84,7 +84,8 @@ const Property = () => {
           onChange={handleSearchChange} // Trigger search on input change
           sx={{
             mr: 1,
-            width: { xs: "100%", sm: "auto", md: 200 }, // Responsive width
+            width: { xs: "100%", sm: "auto", md: 200 },
+            backgroundColor: "white",
           }}
         />
 
@@ -104,7 +105,7 @@ const Property = () => {
       </Box>
 
       {/* Nested routes will be rendered here */}
-      <Outlet context={{ properties, searchTerm }} />
+      <Outlet context={{ properties, searchTerm, fetchProperties }} />
     </Box>
   );
 };

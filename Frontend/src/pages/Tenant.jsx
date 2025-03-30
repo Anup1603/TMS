@@ -115,7 +115,7 @@ function Tenant() {
   );
 
   return (
-    <Box sx={{ p: isMobile ? 1 : 3 }}>
+    <Box sx={{ p: isMobile ? 1 : 3, backgroundColor: "#f5f7fa" }}>
       <Box sx={{ mb: 2 }}>{/* <TenantBreadCrumbs /> */}</Box>
 
       {/* Header */}

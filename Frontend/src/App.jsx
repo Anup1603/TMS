@@ -92,7 +92,6 @@ import Property from "./pages/Property";
 import Tenant from "./pages/Tenant";
 import Billing from "./pages/Billing";
 import Account from "./pages/Account";
-import Setting from "./pages/Setting";
 import LandingPage from "./screens/LandingPage";
 import AuthPage from "./screens/AuthPage";
 import PropertyList from "./propertyScreens/PropertyList";
@@ -102,6 +101,7 @@ import CreateTenant from "./tenantScreens/CreateTenant";
 import TenantList from "./tenantScreens/TenantList";
 import TenantDetails from "./tenantScreens/TenantDetails";
 import OverView from "./pages/OverView";
+import HelpAndSupport from "./pages/HelpAndSupport";
 
 function App() {
   // const [user, setUser] = useState(null);
@@ -157,7 +157,7 @@ function App() {
 
           <Route path="billing" element={<Billing />} />
           <Route path="account" element={<Account />} />
-          <Route path="setting" element={<Setting />} />
+          <Route path="helpandsupport" element={<HelpAndSupport />} />
         </Route>
 
         {/* Fallback route */}

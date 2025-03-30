@@ -12,7 +12,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const PropertyList = () => {
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,11 @@ const PropertyList = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
 
   // Get properties and search term from context
-  const { properties, searchTerm } = useOutletContext();
+  const { properties, searchTerm, fetchProperties } = useOutletContext();
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
 
   // Filter properties based on search term
   const filteredProperties = searchTerm
@@ -56,6 +60,10 @@ const PropertyList = () => {
             left: 0,
             right: 0,
             zIndex: 9999,
+            backgroundColor: "#836df7",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#fff",
+            },
           }}
         />
       )}

@@ -66,6 +66,10 @@ const LandingPage = () => {
             right: 0,
             zIndex: 9999,
             // Ensure loader is above other elements
+            backgroundColor: "#836df7",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#fff",
+            },
           }}
         />
       )}

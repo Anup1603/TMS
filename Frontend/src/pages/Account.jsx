@@ -147,6 +147,7 @@ function Account() {
         minHeight: "100vh",
         bgcolor: "background.default",
         position: "relative",
+        backgroundColor: "#f5f7fa",
       }}
     >
       <div style={{ position: "absolute", top: "32px", right: "15px" }}>

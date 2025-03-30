@@ -14,6 +14,8 @@ import {
   ListItemText,
   Paper,
   LinearProgress,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -28,6 +30,8 @@ const PropertyDetails = () => {
   const [property, setProperty] = useState(null);
   const [tenant, setTenant] = useState(null);
   const [loading, setLoading] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +50,7 @@ const PropertyDetails = () => {
       } catch (error) {
         console.error("Error fetching property data:", error);
       } finally {
-        setLoader(false);
+        setLoading(false);
       }
     };
 
@@ -66,7 +70,7 @@ const PropertyDetails = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: isMobile ? 0 : 3 }}>
       {loading && (
         <LinearProgress
           sx={{
@@ -75,6 +79,10 @@ const PropertyDetails = () => {
             left: 0,
             right: 0,
             zIndex: 9999,
+            backgroundColor: "#836df7",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#fff",
+            },
           }}
         />
       )}

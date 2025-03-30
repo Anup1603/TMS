@@ -56,7 +56,7 @@ const CreateProperty = () => {
         Create New Property
       </Typography>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ mt: 3 }}>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
@@ -65,6 +65,7 @@ const CreateProperty = () => {
             value={formData.propertyName}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -75,6 +76,7 @@ const CreateProperty = () => {
             value={formData.flatNo}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -85,6 +87,7 @@ const CreateProperty = () => {
             value={formData.bhk}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -96,6 +99,7 @@ const CreateProperty = () => {
             value={formData.status}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           >
             <MenuItem value="Available">Available</MenuItem>
             <MenuItem value="Not Available">Not Available</MenuItem>
@@ -110,6 +114,7 @@ const CreateProperty = () => {
             value={formData.rentAmount}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -120,6 +125,7 @@ const CreateProperty = () => {
             value={formData.address}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -130,6 +136,7 @@ const CreateProperty = () => {
             value={formData.city}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -140,6 +147,7 @@ const CreateProperty = () => {
             value={formData.state}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12}>
@@ -150,6 +158,7 @@ const CreateProperty = () => {
             value={formData.propertyOwner}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
       </Grid>

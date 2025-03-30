@@ -27,6 +27,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+import randomColor from "randomcolor";
+
 const Overview = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -139,17 +141,21 @@ const Overview = () => {
   }, [generateMockData]);
 
   // Color palette for charts
-  const COLORS = useMemo(
-    () => [
-      theme.palette.primary.main,
-      theme.palette.secondary.main,
-      theme.palette.success.main,
-      theme.palette.warning.main,
-      theme.palette.error.main,
-      theme.palette.info.main,
-    ],
-    [theme]
-  );
+  // const COLORS = useMemo(
+  //   () => [
+  //     theme.palette.primary.main,
+  //     theme.palette.secondary.main,
+  //     theme.palette.success.main,
+  //     theme.palette.warning.main,
+  //     theme.palette.error.main,
+  //     theme.palette.info.main,
+  //   ],
+  //   [theme]
+  // );
+
+  const stateCount = propertyDistribution.length;
+
+  const COLORS = Array.from({ length: stateCount }, () => randomColor());
 
   // Custom tooltip for charts
   const CustomTooltip = ({ active, payload, label }) => {
@@ -235,6 +241,7 @@ const Overview = () => {
         p: isMobile ? 2 : 4,
         background: theme.palette.background.default,
         minHeight: "100vh",
+        backgroundColor: "#f5f7fa",
       }}
     >
       {/* Page Title */}

@@ -16,17 +16,18 @@ import {
   LinearProgress,
   useTheme,
   useMediaQuery,
+  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import PeopleIcon from "@mui/icons-material/People";
 import PaymentIcon from "@mui/icons-material/Payment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import SettingsIcon from "@mui/icons-material/Settings";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import ContactSupportIcon from "@mui/icons-material/ContactSupport";
 
 const drawerWidth = 230;
 
@@ -114,16 +115,16 @@ const Dashboard = () => {
       ],
       bottom: [
         {
+          text: "Helpdesk",
+          icon: <ContactSupportIcon />,
+          path: "/dashboard/helpandsupport",
+          matchPaths: ["/dashboard/helpandsupport"],
+        },
+        {
           text: "Account",
           icon: <AccountCircleIcon />,
           path: "/dashboard/account",
           matchPaths: ["/dashboard/account"],
-        },
-        {
-          text: "Setting",
-          icon: <SettingsIcon />,
-          path: "/dashboard/setting",
-          matchPaths: ["/dashboard/setting"],
         },
       ],
     }),
@@ -167,7 +168,7 @@ const Dashboard = () => {
                   : theme.palette.action.hover,
               },
               minHeight: 48,
-              justifyContent: isSidebarOpen ? "initial" : "center",
+              justifyContent: isSidebarOpen || isMobile ? "initial" : "center",
               px: 2.5,
               transition: theme.transitions.create(
                 ["background-color", "color"],
@@ -181,7 +182,7 @@ const Dashboard = () => {
             <ListItemIcon
               sx={{
                 minWidth: 0,
-                mr: isSidebarOpen ? 3 : "auto",
+                mr: isSidebarOpen || isMobile ? 3 : "auto",
                 justifyContent: "center",
                 color: isActive(item.matchPaths) ? "#fff" : "inherit",
               }}
@@ -191,7 +192,7 @@ const Dashboard = () => {
             <ListItemText
               primary={item.text}
               sx={{
-                opacity: isSidebarOpen ? 1 : 0,
+                opacity: isSidebarOpen || isMobile ? 1 : 0,
                 transition: theme.transitions.create("opacity", {
                   duration: theme.transitions.duration.shortest,
                 }),
@@ -200,7 +201,8 @@ const Dashboard = () => {
           </ListItem>
         ))}
       </List>
-      <Box sx={{ marginTop: "auto", mb: 2 }}>
+      <Box sx={{ marginTop: "auto", mb: 6 }}>
+        <Divider />
         <List>
           {menuItems.bottom.map((item) => (
             <ListItem
@@ -218,7 +220,8 @@ const Dashboard = () => {
                     : theme.palette.action.hover,
                 },
                 minHeight: 48,
-                justifyContent: isSidebarOpen ? "initial" : "center",
+                justifyContent:
+                  isSidebarOpen || isMobile ? "initial" : "center",
                 px: 2.5,
                 transition: theme.transitions.create(
                   ["background-color", "color"],
@@ -232,7 +235,7 @@ const Dashboard = () => {
               <ListItemIcon
                 sx={{
                   minWidth: 0,
-                  mr: isSidebarOpen ? 3 : "auto",
+                  mr: isSidebarOpen || isMobile ? 3 : "auto",
                   justifyContent: "center",
                   color: isActive(item.matchPaths) ? "#fff" : "inherit",
                 }}
@@ -242,7 +245,7 @@ const Dashboard = () => {
               <ListItemText
                 primary={item.text}
                 sx={{
-                  opacity: isSidebarOpen ? 1 : 0,
+                  opacity: isSidebarOpen || isMobile ? 1 : 0,
                   transition: theme.transitions.create("opacity", {
                     duration: theme.transitions.duration.shortest,
                   }),
@@ -266,6 +269,10 @@ const Dashboard = () => {
             left: 0,
             right: 0,
             zIndex: 9999,
+            backgroundColor: "#836df7",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#fff",
+            },
           }}
         />
       )}
@@ -324,11 +331,9 @@ const Dashboard = () => {
               component="div"
               sx={{
                 fontWeight: 600,
-                transition: theme.transitions.create("opacity", {
-                  duration: theme.transitions.duration.standard,
-                }),
-                opacity: isMobile || isSidebarOpen ? 1 : 0,
-                width: isMobile || isSidebarOpen ? "auto" : 0,
+                // Always show the text in AppBar regardless of sidebar state
+                opacity: 1,
+                width: "auto",
                 overflow: "hidden",
               }}
             >
@@ -396,9 +401,12 @@ const Dashboard = () => {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
+          backgroundColor: "#f5f7fa",
+          minHeight: "100vh",
         }}
       >
         <DrawerHeader />
+
         <Outlet />
       </Box>
     </Box>

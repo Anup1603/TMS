@@ -158,7 +158,11 @@ const AuthPage = () => {
             top: 0,
             left: 0,
             right: 0,
-            zIndex: 9999, // Ensure loader is above other elements
+            zIndex: 9999,
+            backgroundColor: "#836df7",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#fff",
+            },
           }}
         />
       )}

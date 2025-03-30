@@ -83,6 +83,7 @@ const CreateTenant = () => {
             value={formData.name}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -94,6 +95,7 @@ const CreateTenant = () => {
             value={formData.email}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -104,6 +106,7 @@ const CreateTenant = () => {
             value={formData.phoneNo}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -115,6 +118,7 @@ const CreateTenant = () => {
             value={formData.govermentID}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           >
             {governmentIdTypes.map((type) => (
               <MenuItem key={type} value={type}>
@@ -131,6 +135,7 @@ const CreateTenant = () => {
             value={formData.govermentIDNumber}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
           />
         </Grid>
         <Grid item xs={12}>
@@ -142,6 +147,7 @@ const CreateTenant = () => {
             value={formData.leaseStartDate}
             onChange={handleChange}
             required
+            sx={{ backgroundColor: "white" }}
             InputLabelProps={{ shrink: true }}
           />
         </Grid>
