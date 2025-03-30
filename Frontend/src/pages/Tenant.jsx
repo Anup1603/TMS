@@ -54,6 +54,7 @@ import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import TenantBreadCrumbs from "../components/TenantBreadCrumbs";
 import axios from "../axiosInstance";
+import randomColor from "randomcolor";
 
 function Tenant() {
   const theme = useTheme();
@@ -101,10 +102,15 @@ function Tenant() {
     setSearchTerm(value);
   };
 
-  const getRandomColor = () => {
-    const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#FFC300"];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
+  // const getRandomColor = () => {
+  //   const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#FFC300"];
+  //   return colors[Math.floor(Math.random() * colors.length)];
+  // };
+
+  const tenantCount = tenants.length;
+
+  const getRandomColor = () =>
+    Array.from({ length: tenantCount }, () => randomColor());
 
   const filteredTenants = searchTerm
     ? tenants.filter((tenant) =>
@@ -304,6 +310,7 @@ function Tenant() {
             overflowY: "auto",
             border: "none",
             outline: "none",
+            height: isMobile ? "60%" : "85%",
           }}
         >
           {selectedTenant && (
