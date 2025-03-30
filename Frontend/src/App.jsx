@@ -84,6 +84,7 @@ import {
   Route,
   Routes,
   Navigate,
+  BrowserRouter,
 } from "react-router-dom";
 import axios from "./axiosInstance";
 
@@ -128,7 +129,7 @@ function App() {
   // console.log("Hello Appp");
 
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth/:authMode" element={<AuthPage />} />
@@ -163,7 +164,7 @@ function App() {
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 

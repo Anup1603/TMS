@@ -48,6 +48,7 @@ import {
   useMediaQuery,
   useTheme,
   TextField,
+  LinearProgress,
 } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -63,13 +64,17 @@ function Tenant() {
   const [selectedTenant, setSelectedTenant] = useState(null);
   const [property, setProperty] = useState(null);
   const [searchTerm, setSearchTerm] = useState(""); // Search term
+  const [loading, setLoading] = useState(false);
 
   const fetchTenants = async () => {
+    setLoading(true);
     try {
       const { data } = await axios.get("/api/tenant/");
       setTenants(data);
     } catch (error) {
       console.error("Error fetching tenants:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,6 +121,21 @@ function Tenant() {
 
   return (
     <Box sx={{ p: isMobile ? 1 : 3, backgroundColor: "#f5f7fa" }}>
+      {loading && (
+        <LinearProgress
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 9999,
+            backgroundColor: "#836df7",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#fff",
+            },
+          }}
+        />
+      )}
       <Box sx={{ mb: 2 }}>{/* <TenantBreadCrumbs /> */}</Box>
 
       {/* Header */}
@@ -140,10 +160,14 @@ function Tenant() {
           label="Search"
           variant="outlined"
           value={searchTerm}
-          onChange={handleSearchChange} // Trigger search on input change
+          onChange={handleSearchChange}
           sx={{
             mr: 1,
-            width: { xs: "100%", sm: "auto", md: 200 }, // Responsive width
+            width: { xs: "100%", sm: "auto", md: 200 },
+            backgroundColor: "white",
+            "& .MuiOutlinedInput-root": {
+              height: 50, // Adjust this value to change the height
+            },
           }}
         />
       </Box>

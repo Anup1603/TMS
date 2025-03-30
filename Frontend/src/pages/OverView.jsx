@@ -211,7 +211,7 @@ const Overview = () => {
       >
         <CircularProgress size={60} thickness={4} />
         <Typography variant="h6" color="text.secondary">
-          Loading dashboard data...
+          Loading Overview data...
         </Typography>
       </Box>
     );

@@ -35,6 +35,7 @@ const PropertyDetails = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         // Fetch property details
         const propertyRes = await axios.get(`/api/property/${id}`);

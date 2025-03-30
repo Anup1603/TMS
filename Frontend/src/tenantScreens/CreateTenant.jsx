@@ -42,7 +42,6 @@ const CreateTenant = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       // First create the tenant
       await axios.post(`/api/tenant/${id}/create`, formData, {

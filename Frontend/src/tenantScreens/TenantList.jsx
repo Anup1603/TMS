@@ -21,12 +21,12 @@ import AddIcon from "@mui/icons-material/Add";
 
 const TenantList = () => {
   const [tenants, setTenants] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const fetchTenants = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const { data } = await axios.get("/api/tenant");
       setTenants(data || []);
     } catch (error) {

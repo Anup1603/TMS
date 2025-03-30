@@ -18,11 +18,14 @@ const Property = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Search term
 
   const fetchProperties = async () => {
+    setLoading(true);
     try {
       const response = await axios.get("/api/property/");
       setProperties(response.data);
     } catch (error) {
       console.error("Error fetching properties:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,6 +89,9 @@ const Property = () => {
             mr: 1,
             width: { xs: "100%", sm: "auto", md: 200 },
             backgroundColor: "white",
+            "& .MuiOutlinedInput-root": {
+              height: 50, // Adjust this value to change the height
+            },
           }}
         />
 
